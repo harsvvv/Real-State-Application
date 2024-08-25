@@ -61,12 +61,12 @@ export default function Listing() {
     {listing && !loading && !error && (
         <div>
           <Swiper navigation>
-            {listing.imageUrls.map((url) => (
-              <SwiperSlide key={url}>
+            {listing.imageUrls.map((object,index) => (
+              <SwiperSlide key={object.url+index}>
                 <div
                   className='h-[500px] '
                   style={{
-                    background: `url(${url}) center no-repeat`,
+                    background: `url(${object.url}) center no-repeat`,
                     backgroundSize: 'cover',
                   }}
                 ></div>

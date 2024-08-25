@@ -1,31 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import userReducer from './user/userSlice'
-import { useReducer } from 'react'
-import {persistReducer} from 'redux-persist'
 
-import storage from 'redux-persist/lib/storage';
-import persistStore from 'redux-persist/es/persistStore';
+// Combine your reducers
+const rootReducer = combineReducers({ user: userReducer });
 
-
-
-const rootReducer=combineReducers({user:userReducer});
-const persistConfig={
-    key:'root',
-    storage,
-    version:1
-}
-
-const persistedReducer=persistReducer(persistConfig,rootReducer)
-
-
+// Configure the store without persistence
 export const store = configureStore({
-  reducer: persistedReducer,
-  
-  middleware:(getDefaultMiddleware)=>
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-        serializableCheck:false,
+      serializableCheck: false,
     }),
-})
-
-export const persistor=persistStore(store);
+});
+export default store;

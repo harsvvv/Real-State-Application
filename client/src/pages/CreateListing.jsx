@@ -4,6 +4,7 @@
 import React, { useRef, useState } from "react";
 import {useSelector} from 'react-redux'
 import {useNavigate} from 'react-router-dom'
+import uploadImage from "../Helper/UploadImage.js";
 
 import {
     getDownloadURL,
@@ -46,6 +47,7 @@ export default function CreateListing() {
             promises.push(storeImage(files[i]));
         }
           Promise.all(promises).then((urls)=>{
+            console.log(urls);
             setFormData({...formData,imageUrls:formData.imageUrls.concat(urls)})
             setImageUploadError(false)
             setUploading(false)
@@ -60,27 +62,7 @@ export default function CreateListing() {
     }
    }
    const storeImage=async(file)=>{
-    return new Promise((resolve,reject)=>{
-        const storage=getStorage(app);
-        const fileName=new Date().getTime()+file.name;
-        const storageRef=ref(storage,fileName);
-        const uploadTask=uploadBytesResumable(storageRef,file);
-        uploadTask.on(
-            "state_changed",
-            (snapshot)=>{
-                 const progress=(snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                 console.log(`upload is ${progress} done`);
-            },
-            (error)=>{
-                reject(error);
-            },
-            ()=>{
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl)=>{
-                    resolve(downloadUrl);
-                })
-            }
-        )
-    })
+    return uploadImage(file);
    }
    const handleRemoveImage=(index)=>{
     setFormData({
@@ -239,9 +221,9 @@ export default function CreateListing() {
         </div>
         <p className="text-red-700 text-sm">{imageUploadError && imageUploadError}</p>
         {
-    formData.imageUrls.length > 0 && formData.imageUrls.map((url,index) => (
-        <div key={url} className="flex justify-between p-3 border items-center">
-            <img src={url} alt="listing image" className="w-20 h-20 object-contain rounded-lg"/>
+    formData.imageUrls.length > 0 && formData.imageUrls.map((object,index) => (
+        <div key={object.url} className="flex justify-between p-3 border items-center">
+            <img src={object.url} alt="listing image" className="w-20 h-20 object-contain rounded-lg"/>
             <button type="button" onClick={()=>handleRemoveImage(index)} className="p-3 text-red-700 rounded-lg uppercase hover:opacity-75">Delete</button>
         </div>
     ))
